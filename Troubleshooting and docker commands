@@ -1,0 +1,166 @@
+Learn from mistake :
+
+==> Unable to connect EC2 it shows ssh failed:
+
+Reason:
+
+1)In route table association forget to attach IGW
+
+2) Created 2 route table for seperate subnets 
+
+==> After launch EC2 network not working inside ec2 :
+
+Reason :
+
+1) egress -> outbound traffic not mentioned under security group so that unable to install plugin and application 
+
+Command used to check internet access:
+
+curl ifconfig.me
+ping 8.8.8.8
+
+
+==> While installing jenkins after run the command it shows unable to read the package:
+
+Reason:
+
+1) after run the wget and repo have to do sudo apt update then only have to use installation command 
+
+==> Maven installation:
+
+# Make sure Java (JDK) is installed
+sudo apt update
+sudo apt install -y openjdk-17-jdk
+
+# Download the binary for Maven 3.9.11
+wget https://dlcdn.apache.org/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.tar.gz
+
+# Extract it
+tar -xzf apache-maven-3.9.11-bin.tar.gz
+
+# Move it to /opt
+sudo mv apache-maven-3.9.11 /opt/apache-maven-3.9.11
+
+# Setup environment variables
+sudo tee /etc/profile.d/maven.sh << 'EOF'
+export M2_HOME=/opt/apache-maven-3.9.11
+export MAVEN_HOME=/opt/apache-maven-3.9.11
+export PATH=\$M2_HOME/bin:\$PATH
+EOF
+
+# Make script executable
+sudo chmod +x /etc/profile.d/maven.sh
+
+# Apply changes
+source /etc/profile.d/maven.sh
+
+# Verify installation
+mvn -version
+
+==> If mavn not installed means issue with the path try below :
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+sudo nano /etc/profile.d/maven.sh
+
+export M2_HOME=/opt/apache-maven-3.9.11
+export MAVEN_HOME=/opt/apache-maven-3.9.11
+export PATH=$M2_HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH
+
+sudo chmod +x /etc/profile.d/maven.sh
+
+source /etc/profile.d/maven.sh
+
+==> How to find java path and maven path :
+
+1)readlink -f $(which java)
+
+2) echo $PATH
+
+
+==> To find key location :
+
+Command:
+
+aws ec2 describe-key-pairs --region us-east-1
+
+
+==> Docker installation :
+
+sudo apt update -y
+sudo apt upgrade -y
+
+sudo apt install ca-certificates curl gnupg lsb-release -y
+
+
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+
+
+==> If you are unable to pull the image for docker and it shows permission denied :
+
+Reason :
+
+1) User dont have permission 
+
+How to fix this :
+
+1) Run below command :
+
+sudo usermod -aG docker $USER
+newgrp docker
+
+==>while we create docker by docker pull if we stop and start the container it will delete old one and create new one
+==>So we create docker file then run means it will be stable if we start and stop also nothing happen 
+
+
+==> Create dockeradmin:
+
+1) create admin and password 
+2) vi /etc/ssh/sshd_config file.==> uncomment password authentication:yes
+3) sudo service ssh restart 
+4) su - dockeradmin
+
+
+==> openSSH under manage jenkins:
+
+1) configure system > SSH server > name(dockerhost) > hostname(public ip address) > username (dockeradmin) >password
+
+
+==> Commands used in docker :
+
+1. sudo systemctl docker enable ==> for enabling docker
+
+2. sudo systemctl docker status ==> used to check status 
+
+3. docker pull imagename ==> used to download image 
+
+4. docker run -d containername -p 8081:8080 imagename == used to create the container
+
+8081 : used for external users
+8080 : Internal port for Tomcat server 
+
+5. docker ps ==> it will show available container 
+
+6. docker stop containername ==> used to stop 
+
+7. docker rm containername ==> used to remove 
+
+8. docker exec -it containername /bin/bash ==> it will go inside container 
+
+9. docker restart containername ==> restarting the container 
+
+10. docker build -t dockerimage . ==> command used to create dockerimage by using docker file 
+
+11. sudo useradd dockeradmin ==> creating dockeradmin
+
+12. sudo passwd dockeradmin ==> creating password 

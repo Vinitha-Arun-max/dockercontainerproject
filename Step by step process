@@ -1,0 +1,36 @@
+Deploy your code on a Docker Container using Jenkins on AWS
+
+Step by step process:
+Jenkins server:
+	Create Ec2 instance enable Jenkins port 8080 this is for jenkinsserver
+	Inside EC2 install java, Jenkins , maven , git
+	In Jenkins install github and mvn plugin
+	In Jenkins under tools install mvn , java and git 
+Docker server:
+	Create EC2
+	Install docker on that EC2
+	Enable docker service install apache server on docker 
+	In ec2 under security inbound role enable port 8081-9000
+	Install tomcat server on docker manually as well as using docker file 
+Integrate docker with Jenkins server :
+	Create dockeradmin
+	Install publish overSSH in Jenkins via Jenkins plugin
+	Configure mkdir -p /home/dockeradmin/.ssh
+	Ii) sudo nano /home/dockeradmin/.ssh/authorized_keys
+	In this dockeradmin/.ssh  paste key from Jenkins server cat ~/.ssh/id_rsa system add SSH server
+Create Jenkins Job to Build and Copy Artifacts on to Docker Host :
+	Switch Ubuntu on docker host: ssh ubuntu@13.204.251.39
+	Create .ssh directory and authorized keys 
+	I) sudo
+	.pub ( Before create a key from Jenkins by running ssh-keygen -t rsa -b 4096 -C "jenkins")
+	Set permission:
+sudo chown -R dockeradmin:dockeradmin /home/dockeradmin/.ssh
+sudo chmod 700 /home/dockeradmin/.ssh
+sudo chmod 600 /home/dockeradmin/.ssh/authorized_keys
+	Test login on Jenkins server : ssh dockeradmin@13.204.251.39
+	In Jenkins create a key ssh-keygen -t rsa -b 4096
+	View the key by : cat ~/.ssh/id_rsa.pub
+	Paste it in docker like this echo "ssh-key-here" | sudo tee -a /home/dockeradmin/.ssh/authorized_keys > /dev/null
+	From this Jenkins server get private key sudo cat /var/lib/jenkins/.ssh/id_rsa   and paste this key under Jenkins system configuration  under SSH  under key  then test the connection 
+
+
